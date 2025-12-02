@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 9 Learning Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Security Overlay (Black Screen) -->
+    <div class="security-overlay" id="securityOverlay">
+        <div class="security-message">
+            <i class="fas fa-shield-alt"></i>
+            <div>Screen Capture Prohibited</div>
+            <div style="font-size: 0.9rem; margin-top: 10px; color: #aaa;">Protected content. Please return to the window.</div>
+        </div>
+    </div>
+
+    <!-- Watermark Container -->
+    <div class="watermark-container" id="watermarkContainer"></div>
+
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <div class="login-logo">
+                <div class="login-logo-icon">9</div>
+                <div class="login-title" data-translate="app_title">CLASS 9</div>
+                <div class="login-subtitle" data-translate="login_subtitle">Learning Platform</div>
+            </div>
+
+            <div class="login-error" id="loginError" data-translate="login_error">
+                Invalid username or password!
+            </div>
+
+            <form class="login-form" id="loginForm">
+                <div class="login-form-group">
+                    <label class="login-label" data-translate="username">Username</label>
+                    <input type="text" class="login-input" id="loginUsername" placeholder="Enter your username" required>
+                </div>
+
+                <div class="login-form-group">
+                    <label class="login-label" data-translate="password">Password</label>
+                    <input type="password" class="login-input" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> <span data-translate="login">Login</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo">9</div>
+                    <h2 data-translate="app_title">CLASS</h2>
+                </div>
+                <div class="sidebar-subtitle" data-translate="admin_panel">Learning Platform</div>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span data-translate="dashboard">Dashboard</span>
+                </div>
+                <div class="menu-item admin-only" data-page="userManagerPage">
+                    <i class="fas fa-users"></i>
+                    <span data-translate="user_manager">User Manager</span>
+                </div>
+                <div class="menu-item admin-only" data-page="questionsUploadingPage">
+                    <i class="fas fa-file-upload"></i>
+                    <span data-translate="questions_uploading">Questions Uploading</span>
+                </div>
+                <div class="menu-item admin-only" data-page="questionManagementPage">
+                    <i class="fas fa-question-circle"></i>
+                    <span data-translate="question_management">Question Management</span>
+                </div>
+                <div class="menu-item admin-only" data-page="unitLessonManagementPage">
+                    <i class="fas fa-book"></i>
+                    <span data-translate="unit_lesson_management">Unit and Lesson Management</span>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span data-translate="logout">Logout</span>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle" data-translate="dashboard">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="language-selector">
+                        <button class="language-btn" id="languageBtn">
+                            <i class="fas fa-globe"></i>
+                            <span id="currentLanguage">English</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="language-dropdown" id="languageDropdown">
+                            <div class="language-option active" data-lang="en">
+                                <span>English</span>
+                            </div>
+                            <div class="language-option" data-lang="ku">
+                                <span>Kurdî</span>
+                            </div>
+                            <div class="language-option" data-lang="ar">
+                                <span>العربية</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">AD</div>
+                        <span id="currentUser">Admin User</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="page-section active">
+                    <div class="user-info-display" id="dashboardUserInfo">
+                        <!-- User info will be dynamically loaded here -->
+                    </div>
+                    <h2 style="margin-bottom: 20px; color: var(--primary);" data-translate="subjects">Subjects</h2>
+                    <div class="card-container" id="subjectsCardContainer">
+                        <!-- Cards will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Separate Pages for Each Section -->
+    
+    <!-- User Manager Page -->
+    <div class="separate-page" id="userManagerPage">
+        <div class="separate-page-header">
+            <div class="header-left">
+                <button class="close-page-btn" id="closeUserManagerPage">
+                    <i class="fas fa-arrow-left"></i> <span data-translate="back_to_dashboard">Back to Dashboard</span>
+                </button>
+                <h1 data-translate="user_management">User Management</h1>
+            </div>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="language-btn" id="userManagerLanguageBtn">
+                        <i class="fas fa-globe"></i>
+                        <span id="userManagerCurrentLanguage">English</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown" id="userManagerLanguageDropdown">
+                        <div class="language-option active" data-lang="en">
+                            <span>English</span>
+                        </div>
+                        <div class="language-option" data-lang="ku">
+                            <span>Kurdî</span>
+                        </div>
+                        <div class="language-option" data-lang="ar">
+                            <span>العربية</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar" id="userManagerUserAvatar">AD</div>
+                    <span id="userManagerCurrentUser">Admin User</span>
+                </div>
+            </div>
+        </div>
+        <div class="separate-page-content">
+            <div class="user-info-display" id="userManagerUserInfo">
+                <!-- User info will be dynamically loaded here -->
+            </div>
+            <div class="user-manager-header">
+                <div class="user-manager-title" data-translate="user_management">User Management</div>
+                <button class="add-user-btn" id="openModalBtn">
+                    <i class="fas fa-plus"></i>
+                    <span data-translate="add_new_user">Add New User</span>
+                </button>
+            </div>
+
+            <div class="user-table-container">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th data-translate="id">ID</th>
+                            <th data-translate="name">Name</th>
+                            <th data-translate="username">Username</th>
+                            <th data-translate="password">Password</th>
+                            <th data-translate="email">Email</th>
+                            <th data-translate="role">Role</th>
+                            <th data-translate="actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Users will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Uploading Page -->
+    <div class="separate-page" id="questionsUploadingPage">
+        <div class="separate-page-header">
+            <div class="header-left">
+                <button class="close-page-btn" id="closeQuestionsUploadingPage">
+                    <i class="fas fa-arrow-left"></i> <span data-translate="back_to_dashboard">Back to Dashboard</span>
+                </button>
+                <h1 data-translate="questions_uploading">Questions Uploading</h1>
+            </div>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="language-btn" id="questionsUploadingLanguageBtn">
+                        <i class="fas fa-globe"></i>
+                        <span id="questionsUploadingCurrentLanguage">English</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown" id="questionsUploadingLanguageDropdown">
+                        <div class="language-option active" data-lang="en">
+                            <span>English</span>
+                        </div>
+                        <div class="language-option" data-lang="ku">
+                            <span>Kurdî</span>
+                        </div>
+                        <div class="language-option" data-lang="ar">
+                            <span>العربية</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar" id="questionsUploadingUserAvatar">AD</div>
+                    <span id="questionsUploadingCurrentUser">Admin User</span>
+                </div>
+            </div>
+        </div>
+        <div class="separate-page-content">
+            <div class="user-info-display" id="questionsUploadingUserInfo">
+                <!-- User info will be dynamically loaded here -->
+            </div>
+            <!-- Upload Questions Section -->
+            <div class="question-upload-form">
+                <h2 class="section-title" data-translate="question_upload">Question Upload</h2>
+                <p class="section-subtitle" data-translate="upload_subtitle">Add questions to lessons and units</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="questionSubject" data-translate="subject">Subject</label>
+                        <select class="form-select" id="questionSubject" required>
+                            <option value="">Select a subject</option>
+                            <option value="kurdish" data-translate="kurdish">Kurdish</option>
+                            <option value="english" data-translate="english">English</option>
+                            <option value="arabic" data-translate="arabic">Arabic</option>
+                            <option value="math" data-translate="math">Mathematics</option>
+                            <option value="science" data-translate="science">Science</option>
+                            <option value="social" data-translate="social">Social Studies</option>
+                            <option value="social-value" data-translate="social_value">Social Value</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="questionUnit">Unit</label>
+                        <select class="form-select" id="questionUnit" required>
+                            <option value="">Select a unit</option>
+                            <!-- Units will be dynamically populated -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="questionLesson">Lesson</label>
+                        <select class="form-select" id="questionLesson" required>
+                            <option value="">Select a lesson</option>
+                            <!-- Lessons will be dynamically populated -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="questionText" data-translate="question_text">Question Text</label>
+                    <textarea class="form-textarea" id="questionText" placeholder="Enter the question" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" data-translate="options">Options</label>
+                    <div class="option-row">
+                        <input type="text" class="option-input" id="optionA" placeholder="Option A" required>
+                        <div class="correct-option">
+                            <input type="radio" class="correct-checkbox" name="correctOption" value="0" required>
+                            <span>Correct</span>
+                        </div>
+                    </div>
+                    <div class="option-row">
+                        <input type="text" class="option-input" id="optionB" placeholder="Option B" required>
+                        <div class="correct-option">
+                            <input type="radio" class="correct-checkbox" name="correctOption" value="1" required>
+                            <span>Correct</span>
+                        </div>
+                    </div>
+                    <div class="option-row">
+                        <input type="text" class="option-input" id="optionC" placeholder="Option C">
+                        <div class="correct-option">
+                            <input type="radio" class="correct-checkbox" name="correctOption" value="2">
+                            <span>Correct</span>
+                        </div>
+                    </div>
+                    <div class="option-row">
+                        <input type="text" class="option-input" id="optionD" placeholder="Option D">
+                        <div class="correct-option">
+                            <input type="radio" class="correct-checkbox" name="correctOption" value="3">
+                            <span>Correct</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="submit-btn" id="uploadQuestionBtn">
+                    <i class="fas fa-upload"></i>
+                    <span data-translate="upload_question">Upload Question</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Management Page -->
+    <div class="separate-page" id="questionManagementPage">
+        <div class="separate-page-header">
+            <div class="header-left">
+                <button class="close-page-btn" id="closeQuestionManagementPage">
+                    <i class="fas fa-arrow-left"></i> <span data-translate="back_to_dashboard">Back to Dashboard</span>
+                </button>
+                <h1 data-translate="question_management">Question Management</h1>
+            </div>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="language-btn" id="questionManagementLanguageBtn">
+                        <i class="fas fa-globe"></i>
+                        <span id="questionManagementCurrentLanguage">English</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown" id="questionManagementLanguageDropdown">
+                        <div class="language-option active" data-lang="en">
+                            <span>English</span>
+                        </div>
+                        <div class="language-option" data-lang="ku">
+                            <span>Kurdî</span>
+                        </div>
+                        <div class="language-option" data-lang="ar">
+                            <span>العربية</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar" id="questionManagementUserAvatar">AD</div>
+                    <span id="questionManagementCurrentUser">Admin User</span>
+                </div>
+            </div>
+        </div>
+        <div class="separate-page-content">
+            <div class="user-info-display" id="questionManagementUserInfo">
+                <!-- User info will be dynamically loaded here -->
+            </div>
+            <div class="question-manager-header">
+                <div class="question-manager-title" data-translate="question_management">Question Management</div>
+            </div>
+
+            <div class="question-filter">
+                <div class="filter-group">
+                    <label class="form-label" for="filterSubject">Filter by Subject</label>
+                    <select class="form-select" id="filterSubject">
+                        <option value="">All Subjects</option>
+                        <option value="kurdish">Kurdish</option>
+                        <option value="english">English</option>
+                        <option value="arabic">Arabic</option>
+                        <option value="math">Mathematics</option>
+                        <option value="science">Science</option>
+                        <option value="social">Social Studies</option>
+                        <option value="social-value">Social Value</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="form-label" for="filterUnit">Filter by Unit</label>
+                    <select class="form-select" id="filterUnit">
+                        <option value="">All Units</option>
+                        <!-- Units will be dynamically populated -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="form-label" for="filterLesson">Filter by Lesson</label>
+                    <select class="form-select" id="filterLesson">
+                        <option value="">All Lessons</option>
+                        <!-- Lessons will be dynamically populated -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="question-table-container">
+                <table class="question-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Subject</th>
+                            <th>Unit</th>
+                            <th>Lesson</th>
+                            <th>Question</th>
+                            <th>Options</th>
+                            <th>Correct Answer</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="questionTableBody">
+                        <!-- Questions will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unit and Lesson Management Page -->
+    <div class="separate-page" id="unitLessonManagementPage">
+        <div class="separate-page-header">
+            <div class="header-left">
+                <button class="close-page-btn" id="closeUnitLessonManagementPage">
+                    <i class="fas fa-arrow-left"></i> <span data-translate="back_to_dashboard">Back to Dashboard</span>
+                </button>
+                <h1 data-translate="unit_lesson_management">Unit and Lesson Management</h1>
+            </div>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="language-btn" id="unitLessonManagementLanguageBtn">
+                        <i class="fas fa-globe"></i>
+                        <span id="unitLessonManagementCurrentLanguage">English</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown" id="unitLessonManagementLanguageDropdown">
+                        <div class="language-option active" data-lang="en">
+                            <span>English</span>
+                        </div>
+                        <div class="language-option" data-lang="ku">
+                            <span>Kurdî</span>
+                        </div>
+                        <div class="language-option" data-lang="ar">
+                            <span>العربية</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar" id="unitLessonManagementUserAvatar">AD</div>
+                    <span id="unitLessonManagementCurrentUser">Admin User</span>
+                </div>
+            </div>
+        </div>
+        <div class="separate-page-content">
+            <div class="user-info-display" id="unitLessonManagementUserInfo">
+                <!-- User info will be dynamically loaded here -->
+            </div>
+            <!-- Unit and Lesson Management Section -->
+            <div class="content-section">
+                <h2 class="section-title" data-translate="unit_management">Unit and Lesson Management</h2>
+                <p class="section-subtitle" data-translate="unit_subtitle">Create and manage units and lessons</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="newUnitSubject" data-translate="subject">Subject</label>
+                        <select class="form-select" id="newUnitSubject" required>
+                            <option value="">Select a subject</option>
+                            <option value="kurdish" data-translate="kurdish">Kurdish</option>
+                            <option value="english" data-translate="english">English</option>
+                            <option value="arabic" data-translate="arabic">Arabic</option>
+                            <option value="math" data-translate="math">Mathematics</option>
+                            <option value="science" data-translate="science">Science</option>
+                            <option value="social" data-translate="social">Social Studies</option>
+                            <option value="social-value" data-translate="social_value">Social Value</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newUnitName">Unit Name</label>
+                        <input type="text" class="form-input" id="newUnitName" placeholder="Enter unit name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newUnitDescription">Unit Description</label>
+                        <input type="text" class="form-input" id="newUnitDescription" placeholder="Enter unit description">
+                    </div>
+                </div>
+                
+                <button class="submit-btn" id="addUnitBtn">
+                    <i class="fas fa-plus"></i>
+                    <span data-translate="add_unit">Add Unit</span>
+                </button>
+                
+                <div class="form-row" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label class="form-label" for="newLessonUnit">Select Unit</label>
+                        <select class="form-select" id="newLessonUnit" required>
+                            <option value="">Select a unit</option>
+                            <!-- Units will be dynamically populated -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newLessonName">Lesson Name</label>
+                        <input type="text" class="form-input" id="newLessonName" placeholder="Enter lesson name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newLessonDescription">Lesson Description</label>
+                        <input type="text" class="form-input" id="newLessonDescription" placeholder="Enter lesson description">
+                    </div>
+                </div>
+                
+                <button class="submit-btn" id="addLessonBtn">
+                    <i class="fas fa-plus"></i>
+                    <span data-translate="add_lesson">Add Lesson</span>
+                </button>
+            </div>
+
+            <!-- Unit and Lesson List Section -->
+            <div class="content-section">
+                <h2 class="section-title">Current Units and Lessons</h2>
+                <div class="unit-list" id="unitListContainer">
+                    <!-- Units and lessons will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject Detail Page -->
+    <div class="separate-page" id="subjectDetailPage">
+        <div class="separate-page-header">
+            <div class="header-left">
+                <button class="close-page-btn" id="closeSubjectDetailPage">
+                    <i class="fas fa-arrow-left"></i> <span data-translate="back_to_dashboard">Back to Dashboard</span>
+                </button>
+                <h1 id="subjectDetailTitle">Subject Detail</h1>
+            </div>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="language-btn" id="subjectDetailLanguageBtn">
+                        <i class="fas fa-globe"></i>
+                        <span id="subjectDetailCurrentLanguage">English</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown" id="subjectDetailLanguageDropdown">
+                        <div class="language-option active" data-lang="en">
+                            <span>English</span>
+                        </div>
+                        <div class="language-option" data-lang="ku">
+                            <span>Kurdî</span>
+                        </div>
+                        <div class="language-option" data-lang="ar">
+                            <span>العربية</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar" id="subjectDetailUserAvatar">AD</div>
+                    <span id="subjectDetailCurrentUser">Admin User</span>
+                </div>
+            </div>
+        </div>
+        <div class="separate-page-content">
+            <div class="user-info-display" id="subjectDetailUserInfo">
+                <!-- User info will be dynamically loaded here -->
+            </div>
+            <div class="detail-header">
+                <div class="detail-title" id="subjectDetailPageTitle">Subject Name</div>
+            </div>
+            <div class="units-container" id="subjectDetailUnitsContainer">
+                <!-- Units will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" data-translate="add_new_user">Add New User</div>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label class="form-label" for="name" data-translate="full_name">Full Name</label>
+                        <input type="text" class="form-input" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="username" data-translate="username">Username</label>
+                        <input type="text" class="form-input" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password" data-translate="password">Password</label>
+                        <input type="password" class="form-input" id="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="email" data-translate="email">Email</label>
+                        <input type="email" class="form-input" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="role" data-translate="role">Role</label>
+                        <select class="form-input" id="role" required>
+                            <option value="">Select Role</option>
+                            <option value="Admin" data-translate="admin">Admin</option>
+                            <option value="Student" data-translate="student">Student</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" id="cancelBtn" data-translate="cancel">Cancel</button>
+                <button class="save-btn" id="saveBtn" data-translate="save_user">Save User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Taking Modal -->
+    <div class="quiz-modal" id="quizModal">
+        <div class="quiz-modal-content">
+            <div class="quiz-modal-header">
+                <div>
+                    <div class="quiz-modal-title" id="quizModalTitle">Quiz Title</div>
+                    <div class="quiz-modal-subtitle" id="quizModalSubtitle">Subject • Questions</div>
+                </div>
+                <button class="quiz-close-btn" id="closeQuizModalBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="quiz-modal-body">
+                <div class="quiz-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Question 1 of 5</div>
+                </div>
+                
+                <div class="question-container-modal">
+                    <div class="question-text-modal" id="currentQuestionText">Question text will appear here</div>
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Options will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <!-- Answer Feedback Section -->
+                <div class="answer-feedback" id="answerFeedback" style="display: none; margin-top: 20px; padding: 15px; border-radius: 8px;">
+                    <div class="feedback-content" id="feedbackContent"></div>
+                    <button class="quiz-nav-btn next-btn" id="continueBtn" style="margin-top: 15px;">
+                        <span data-translate="continue">Continue</span> <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="quiz-modal-footer">
+                <button class="quiz-nav-btn prev-btn" id="prevQuestionBtn">
+                    <i class="fas fa-arrow-left"></i> <span data-translate="previous">Previous</span>
+                </button>
+                <button class="quiz-nav-btn next-btn" id="nextQuestionBtn">
+                    <span data-translate="next">Next</span> <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="quiz-nav-btn submit-btn" id="submitQuizBtn" style="display: none;">
+                    <span data-translate="submit_quiz">Submit Quiz</span> <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div class="results-modal" id="resultsModal">
+        <div class="results-content">
+            <div class="results-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="results-title" data-translate="quiz_completed">Quiz Completed!</div>
+            <div class="results-score" id="resultsScore">0/0</div>
+            <div class="results-details" id="resultsDetails">
+                <!-- Results will be dynamically added here -->
+            </div>
+            <button class="close-results-btn" id="closeResultsBtn" data-translate="close_results">
+                Close Results
+            </button>
+        </div>
+    </div>
+
+   <script src="index.js"></script>
+</body>
+</html>
